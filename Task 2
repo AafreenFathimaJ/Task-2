@@ -1,0 +1,47 @@
+# Import necessary libraries
+import numpy as np
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+# Sample data for demonstration
+data = {
+    'CustomerID': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'SpendingScore': [5, 3, 2, 8, 6, 7, 4, 9, 3, 1],
+    'Frequency': [2, 4, 1, 5, 3, 6, 2, 7, 4, 1],
+    'Recency': [10, 5, 8, 3, 6, 2, 9, 1, 7, 4]
+}
+
+# Creating a DataFrame from the sample data
+df = pd.DataFrame(data)
+
+# Selecting features for clustering
+X = df[['SpendingScore', 'Frequency', 'Recency']]
+
+# Standardizing the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Initializing the K-means clustering model
+kmeans = KMeans(n_clusters=3, random_state=42)
+
+# Fitting the model to the data
+kmeans.fit(X_scaled)
+
+# Getting the cluster labels
+cluster_labels = kmeans.labels_
+
+# Adding cluster labels to the DataFrame
+df['Cluster'] = cluster_labels
+
+# Visualizing the clusters
+plt.scatter(df['Frequency'], df['SpendingScore'], c=df['Cluster'], cmap='viridis')
+plt.xlabel('Frequency')
+plt.ylabel('Spending Score')
+plt.title('K-means Clustering of Customers')
+plt.show()
+
+# Displaying the cluster centers
+print("Cluster Centers:")
+print(pd.DataFrame(kmeans.cluster_centers_, columns=['SpendingScore', 'Frequency', 'Recency']))
